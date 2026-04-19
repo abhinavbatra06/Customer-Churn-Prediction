@@ -1,0 +1,20 @@
+
+paths:
+  raw_data: data/raw/telecom_customer_churn.csv
+  cleaned_data: data/processed/cleaned.csv
+  encoded_data: data/processed/encoded.csv
+  model: models/aft_model.pkl
+  model_metadata: models/aft_model_metadata.json
+
+
+model:
+  duration_col: Tenure_in_Months
+  event_col: Churn_status
+  cols_to_drop:
+    - Number_of_Dependents
+    - Number_of_Referrals
+    - Num_Internet_Features
+    - Avg_Monthly_GB_Download
+    - Avg_Monthly_Long_Distance_Charges
+    - Has_Multiple_Lines
+    - Internet_Type_DSL

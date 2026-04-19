@@ -1,0 +1,20 @@
+{
+    "model": "LogNormalAFT",
+    "training_date": "2026-04-19",
+    "c_index_cv_mean": 0.8374,
+    "cv_folds": 5,
+    "duration_col": "Tenure_in_Months",
+    "event_col": "Churn_status",
+    "dropped_columns": [
+        "Number_of_Dependents",
+        "Number_of_Referrals",
+        "Num_Internet_Features",
+        "Avg_Monthly_GB_Download",
+        "Avg_Monthly_Long_Distance_Charges",
+        "Has_Multiple_Lines",
+        "Internet_Type_DSL"
+    ],
+    "training_rows": 5634,
+    "holdout_rows": 1409,
+    "train_test_split": "80/20"
+}

@@ -1,0 +1,9 @@
+.venv/
+.git/
+.pytest_cache/
+notebooks/
+data/
+Churn_prediction_v2 (Repo to use)/
+churn_prediction.egg-info/
+**/__pycache__/
+**/*.pyc
