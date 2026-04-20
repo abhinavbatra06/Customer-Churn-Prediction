@@ -4,6 +4,8 @@ A production-ready survival analysis system that predicts **how long a telecom c
 
 Built with a Log-Normal Accelerated Failure Time (AFT) model, served via a FastAPI REST API, containerised with Docker, and deployed on Render.
 
+![Demo](assets/demo.gif)
+
 ---
 
 ## Why Survival Analysis?
@@ -52,6 +54,7 @@ A **Cox Proportional Hazards** model was also built for research and assumption 
 │   ├── cleaning_nb.ipynb      # Cleaning pipeline notebook
 │   └── feature_engineering_nb.ipynb
 ├── tests/                     # 18 pytest tests
+├── streamlit_app.py           # Streamlit UI (calls Render API)
 ├── config.yaml                # Single source of truth for paths + model config
 ├── Dockerfile
 └── .github/workflows/ci.yml   # CI: test + Docker build
@@ -110,6 +113,22 @@ Interactive docs available at `/docs` (Swagger UI).
 
 ---
 
+## UI
+
+A Streamlit app (`streamlit_app.py`) provides a point-and-click interface for generating predictions without touching the API directly.
+
+- Deployed on **Streamlit Cloud** (free tier)
+- Calls the Render API via `POST /predict`
+- Set the `API_URL` environment variable in Streamlit Cloud secrets to point to your Render service
+
+**Run locally:**
+```bash
+pip install streamlit requests
+API_URL=http://localhost:8000 streamlit run streamlit_app.py
+```
+
+---
+
 ## Run Locally
 
 **Prerequisites:** Python 3.10+
@@ -140,7 +159,20 @@ docker run -p 8000:8000 churn-prediction
 
 ## Deployment
 
-Deployed on **Render** via Docker. The `Dockerfile` packages only the inference components (`src/`, `api/`, `config.yaml`, `models/`).
+| Component | Platform | Notes |
+|---|---|---|
+| FastAPI backend | Render (Docker) | Auto-deploys on push to `main` |
+| Streamlit UI | Streamlit Cloud | Connects to Render API via `API_URL` secret |
+
+**Render** — detects `Dockerfile` automatically. Set start command:
+```
+uvicorn api.main:app --host 0.0.0.0 --port 8000
+```
+
+**Streamlit Cloud** — connect GitHub repo, set `streamlit_app.py` as the entry point, add secret:
+```toml
+API_URL = "https://<your-render-service>.onrender.com"
+```
 
 CI/CD via **GitHub Actions** — on every PR to `main`:
 1. Installs dependencies
