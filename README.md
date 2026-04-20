@@ -4,7 +4,9 @@ A production-ready survival analysis system that predicts **how long a telecom c
 
 Built with a Log-Normal Accelerated Failure Time (AFT) model, served via a FastAPI REST API, containerised with Docker, and deployed on Render.
 
-![Demo](assets/demo.gif)
+<p align="center">
+  <img src="assets/demo.gif" alt="Streamlit UI Demo" width="800"/>
+</p>
 
 ---
 
