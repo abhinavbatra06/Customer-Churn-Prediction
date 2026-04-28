@@ -1,8 +1,8 @@
 # Customer Churn Survival Analysis
 
-A production-ready survival analysis system that predicts **how long a telecom customer will stay** before churning — not just *whether* they churn, but *when*.
+A production-ready survival analysis system that predicts **how long a telecom customer will stay** before churning - not just *whether* they churn, but *when*.
 
-Built with a Log-Normal Accelerated Failure Time (AFT) model, served via a FastAPI REST API, containerised with Docker, and deployed on Render.
+Built with a Log-Normal Accelerated Failure Time (AFT) model, served via a FastAPI REST API, and containerised with Docker.
 
 <p align="center">
   <img src="assets/Animation.gif" alt="Streamlit UI Demo" width="800"/>
@@ -12,12 +12,12 @@ Built with a Log-Normal Accelerated Failure Time (AFT) model, served via a FastA
 
 ## Why Survival Analysis?
 
-Traditional churn models output a binary probability: churn or not churn. Survival analysis goes further — it models **time-to-event**, producing a predicted median tenure in months for each customer.
+Traditional churn models output a binary probability: churn or not churn. Survival analysis goes further. It models **time-to-event**, producing a predicted median tenure in months for each customer.
 
 This enables:
-- Prioritising retention efforts on customers predicted to churn *soon*
+- Prioritising retention efforts on customers predicted to churn soon
 - Quantifying expected lifetime value more accurately
-- Understanding which factors *accelerate* or *decelerate* churn
+- Understanding which factors accelerate or decelerate churn
 
 ---
 
@@ -29,9 +29,15 @@ This enables:
 | Target | Median predicted tenure (months) |
 | CV C-index | ~0.83 |
 | Training set | 80% of 7,000+ telecom customers |
-| Holdout C-index | Evaluated in `notebooks/aft_model.ipynb` |
+| Holdout C-index | ~0.82 (evaluated in `notebooks/aft_model.ipynb`) |
 
 A **Cox Proportional Hazards** model was also built for research and assumption validation (`notebooks/cox_model.ipynb`).
+
+### Holdout Evaluation and Optimization
+
+Model is tested on a separate 20% of data that was never seen during training. See `notebooks/aft_model.ipynb` for the code.
+
+Both lifelines and Numba calculate the same C-index value (0.82). The Numba version runs 30x faster by compiling Python loops to machine code. 
 
 ---
 
@@ -56,8 +62,8 @@ A **Cox Proportional Hazards** model was also built for research and assumption 
 │   ├── cleaning_nb.ipynb      # Cleaning pipeline notebook
 │   └── feature_engineering_nb.ipynb
 ├── tests/                     # 18 pytest tests
-├── streamlit_app.py           # Streamlit UI (calls Render API)
-├── config.yaml                # Single source of truth for paths + model config
+├── streamlit_app.py           # Streamlit UI
+├── config.yaml                # Paths and model config
 ├── Dockerfile
 └── .github/workflows/ci.yml   # CI: test + Docker build
 ```
@@ -117,11 +123,7 @@ Interactive docs available at `/docs` (Swagger UI).
 
 ## UI
 
-A Streamlit app (`streamlit_app.py`) provides a point-and-click interface for generating predictions without touching the API directly.
-
-- Deployed on **Streamlit Cloud** (free tier)
-- Calls the Render API via `POST /predict`
-- Set the `API_URL` environment variable in Streamlit Cloud secrets to point to your Render service
+A Streamlit app (`streamlit_app.py`) provides a point-and-click interface for generating predictions.
 
 **Run locally:**
 ```bash
@@ -159,35 +161,11 @@ docker run -p 8000:8000 churn-prediction
 
 ---
 
-## Deployment
-
-| Component | Platform | Notes |
-|---|---|---|
-| FastAPI backend | Render (Docker) | Auto-deploys on push to `main` |
-| Streamlit UI | Streamlit Cloud | Connects to Render API via `API_URL` secret |
-
-**Render** — detects `Dockerfile` automatically. Set start command:
-```
-uvicorn api.main:app --host 0.0.0.0 --port 8000
-```
-
-**Streamlit Cloud** — connect GitHub repo, set `streamlit_app.py` as the entry point, add secret:
-```toml
-API_URL = "https://<your-render-service>.onrender.com"
-```
-
-CI/CD via **GitHub Actions** — on every PR to `main`:
-1. Installs dependencies
-2. Runs all 18 pytest tests
-3. Builds Docker image
-
----
-
 ## Data
 
-Source: [Maven Analytics — Telecom Customer Churn](https://www.mavenanalytics.io/data-playground)
+Source: [Maven Analytics - Telecom Customer Churn](https://www.mavenanalytics.io/data-playground)
 
-7,000+ telecom customers with service usage, contract details, and churn outcomes. Raw data is excluded from this repo — download and place at `data/raw/telecom_customer_churn.csv`, then run the cleaning and feature engineering notebooks.
+7,000+ telecom customers with service usage, contract details, and churn outcomes. Raw data is excluded from this repo. Download and place at `data/raw/telecom_customer_churn.csv`, then run the cleaning and feature engineering notebooks.
 
 ---
 
